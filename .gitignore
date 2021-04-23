@@ -130,4 +130,4 @@ dmypy.json
 .pyre/
 
 # Config file
-*/config.json
+*/config.py
