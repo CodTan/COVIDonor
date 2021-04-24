@@ -1,0 +1,30 @@
+html, body{
+    height: 100%;
+}
+body{
+    padding-top: 4%;
+    padding-bottom: 50px;
+}
+/* .navbar-offset{
+    top: 37px;
+} */
+.wrapper{
+    padding-top: 1%;
+    height: 100%;
+    overflow: auto;
+}
+#navbar-bottom{
+    height:7%;
+    align-items: center;
+    display: flex;
+}
+.bottom p{
+    font-size: 100%;
+    color: whitesmoke;
+}
+.bottom a{
+    cursor: pointer;
+}
+/* #reload-button{
+    display: block;
+} */
