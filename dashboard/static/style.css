@@ -5,9 +5,13 @@ body{
     padding-top: 4%;
     padding-bottom: 50px;
 }
-/* .navbar-offset{
-    top: 37px;
-} */
+table td, table td * {
+    vertical-align: top;
+}
+.main-wrapper{
+    font-size: medium;
+    font-family: 'Montserrat', sans-serif;
+}
 .wrapper{
     padding-top: 1%;
     height: 100%;
@@ -18,13 +22,25 @@ body{
     align-items: center;
     display: flex;
 }
+.tweets{
+    position: relative;
+    padding-bottom: 5%;
+}
+.bottom{
+    position: relative;
+}
 .bottom p{
     font-size: 100%;
     color: whitesmoke;
 }
 .bottom a{
     cursor: pointer;
+    text-decoration: none;
+    color: rgb(184, 164, 129);
 }
-/* #reload-button{
-    display: block;
-} */
+.hide{
+    visibility: hidden;
+}
+.show{
+    visibility: visible;
+}

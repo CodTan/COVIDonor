@@ -1,24 +1,63 @@
-from flask import Flask, render_template, Markup
+'''
+app.py
+'''
+import itertools
+from flask import Flask, render_template, request, redirect
+from tweet import Tweets
 
-app = Flask(__name__, template_folder = 'templates')
+app = Flask(__name__, template_folder='templates')
 
-headings = ("one","two",)
+# headings = ("one","two",)
 
-# tweet = Markup('<blockquote class=\"twitter-tweet\"><p lang=\"en\" dir=\"ltr\">Sir my father the veteran journalist Saeed Naqvi is in desperate need of a hospital bed with Oxygen. His levels are dipping <a href=\"https://twitter.com/drharshvardhan?ref_src=twsrc%%5Etfw\">@drharshvardhan</a> <a href=\"https://twitter.com/ArvindKejriwal?ref_src=twsrc%%5Etfw\">@ArvindKejriwal</a> <a href=\"https://twitter.com/msisodia?ref_src=twsrc%%5Etfw\">@msisodia</a> <a href=\"https://twitter.com/SatyendarJain?ref_src=twsrc%%5Etfw\">@SatyendarJain</a>.</p>&mdash; Saba Naqvi (@_sabanaqvi) <a href=\"https://twitter.com/_sabanaqvi/status/1385611561515962375?ref_src=twsrc%%5Etfw\">April 23, 2021</a></blockquote> <script async src=\"https://platform.twitter.com/widgets.js\" charset=\"utf-8\"></script> ')
-tweet = Markup('<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Just to clarify, I did not recover from COVID nor did I get infected. <br>But I got a check for antibodies and it showed antibody positive. So was wondering if I can donate plasma to those in need.</p>&mdash; Sunil Rao (@RaoManjanbail) <a href="https://twitter.com/RaoManjanbail/status/1385814792036765699?ref_src=twsrc%%5Etfw">April 24, 2021</a></blockquote><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>')
+# ten_tweets = ()
 
-data = (
-    (tweet,tweet),
-    (tweet,tweet)
-)
+# for i in (0, len(tweets_HTML), 2):
+#     try:
+#         ten_tweets += (tweets_HTML[i], tweets_HTML[i+1])
+#     except:
+#         ten_tweets += (tweets_HTML[i],)
 
 
-@app.route('/')
+@app.route('/', methods=["POST", "GET"])
 def home():
-    return 'Welcome!'
-    # return render_template("home.html",headings=headings, data=data)
+    '''
+    TODO
+    '''
+    # html = fetch_tweets()
+    # return 'Welcome!'
+
+    if request.method == "POST":
+        city_name = request.form["city"]
+        search_query = '(((("i+am"("ready"OR"willing")"to"("donate"OR"give"))OR("i+can "("give"OR"donate"))OR("i"("want"OR"wish")"to"("give"OR"donate"))OR("i+am""available+to"("give"OR"donate")))OR("i+have+recovered""COVID"))"plasma") -filter:retweets -modi'
+        search_query_city = search_query + " " + city_name
+        tweets = Tweets()
+        ten_tweets = tuple()
+        tweets_html = list()
+
+        try:
+            tweets_html = tweets.fetch_tweets(search_query_city)
+            ten_tweets = tuple(itertools.zip_longest(tweets_html[0::2], tweets_html[1::2],fillvalue=''))
+            if len(tweets_html) == 0:
+                return render_template("home.html")
+            else:               
+                return render_template("home.html", data=ten_tweets)
+        except Exception as err: 
+            return "It's not you it's me!"
+        # return "This is the city query platform."
+
+
+    else:
+
+        ten_tweets = tuple()
+        tweets_html = list()
+        search_query = '(((("i+am"("ready"OR"willing")"to"("donate"OR"give"))OR("i+can "("give"OR"donate"))OR("i"("want"OR"wish")"to"("give"OR"donate"))OR("i+am""available+to"("give"OR"donate")))OR("i+have+recovered""COVID"))"plasma") -filter:retweets -modi'
+        tweets = Tweets()
+        tweets_html = tweets.fetch_tweets(search_query)
+
+        ten_tweets = tuple(itertools.zip_longest(tweets_html[0::2], tweets_html[1::2]))
+
+        return render_template("home.html", data=ten_tweets)
     # return render_template('home.html')
 
-
 # if __name__ == "__main__":
-#     app.run(debug=True) 
+#     app.run(debug=True)

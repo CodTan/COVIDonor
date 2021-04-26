@@ -10,6 +10,10 @@
         integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet"> 
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <title>COVIDonor</title>
@@ -18,9 +22,9 @@
 <body>
     <div class="main-wrapper">
         <div class="navi-bar top">
-            <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light navbar-offset">
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark navbar-offset">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">COVIDonor</a>
+                    <a class="navbar-brand" href=".">COVIDonor</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -28,13 +32,16 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <!-- <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#">Plasma</a>
-                            </li> -->
+                            <li class="nav-item">
+                                <!-- <a class="nav-link active" aria-current="page" href="">About</a> -->
+                                <!-- <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" data-animation="true" title="Tooltip on bottom"> -->
+                                    <!-- Tooltip on bottom
+                                  </button> -->
+                            </li>
                         </ul>
-                        <form class="d-flex">
-                            <input class="form-control me-2" type="search" placeholder="Enter city/state"
-                                aria-label="Search">
+                        <form class="d-flex" action="#" method="POST">
+                            <input class="form-control me-2" type="search" placeholder="City/state or blood group"
+                                aria-label="Search" name="city">
                             <button class="btn btn-outline-success" type="submit">Search</button>
                         </form>
                     </div>
@@ -44,7 +51,8 @@
 
         <div class="wrapper">
             <div class="div main-text d-flex justify-content-center">
-                <h4 class="text main-top" id="main-text">Real-time tweets from people available to donate plasma.</h4>
+                <h4 class="text main-top" id="main-text" style="font-family: 'Montserrat', sans-serif;">Real-time tweets with information from real people available to donate plasma
+                    themselves.</h4>
                 <br>
                 <!-- <a href="#" class="btn btn-primary btn-lg" tabindex="-1" role="button" aria-disabled="false" id="reload-button">Primary link</a> -->
             </div>
@@ -52,16 +60,25 @@
             <div class="div tweets d-flex justify-content-center">
                 <table>
                     <tr>
-                        <th class="text-center" colspan="2"><button type="button" class="btn btn-primary" id="reload-button">New Tweets</button></th>
+                        <th class="text-center" colspan="2"><button type="button" onClick="window.location.reload();"
+                                class="btn btn-primary" id="reload-button">New Tweets</button>
+                            <p id="timer" class="hide">Reload new tweets after <span id="time">05:00</span> minutes</p>
+                        </th>
                         <!-- <th></th> -->
                     </tr>
-                    {% for row in data %}
-                    <tr>
-                        {% for cell in row %}
-                        <td class="text-center">{{ cell }}</td>
+                    {% if data is defined %}
+                        {% for row in data %}
+                        <tr>
+                            {% for cell in row %}
+                            <td class="text-center">{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
                         {% endfor %}
-                    </tr>
-                    {% endfor %}
+                    {% else %}
+                        <tr >
+                            <td><p>No results for that search!</p></td>
+                        </tr>
+                    {% endif %}
                 </table>
             </div>
         </div>
@@ -69,22 +86,74 @@
         <div class="bottom">
             <nav class="navbar fixed-bottom navbar-dark bg-dark justify-content-center" id="navbar-bottom">
                 <div class="container-fluid justify-content-center">
-                    <p class="navbar-bottom">For any feedback, contact <a>@taniya_seth</a>. Stay safe everyone!</p>
+                    <p class="navbar-bottom">For any feedback, contact <a target= "_blank" href="https://www.twitter.com/taniya_seth">@taniya_seth</a>. Stay safe everyone! (Updates rolled-out frequently)</p>
                 </div>
             </nav>
         </div>
     </div>
 
     <script type="text/javascript">
-        function reloadTweets() {
-            document.getElementById("reload-button").disabled = true;
-            setTimeout(function () {
-                document.getElementById("reload-button").disabled = false;
-            }, 300000);
+        // function reloadTweets() {
+        //     document.getElementById("reload-button").disabled = true;
+        //     setTimeout(function () {
+        //         document.getElementById("reload-button").disabled = false;
+        //     }, 3000);
 
+        // }
+        // document.getElementById("reload-button").addEventListener("click", reloadTweets);
+
+        var mins;
+        var secs;
+        var interval;
+
+        $(document).ready(function () {
+            // window.onload(function () {
+                mins = 10;
+                secs = 0;
+                var btn = $("#reload-button");
+                btn.attr("disabled", true);
+                interval = setInterval(function () {
+                    if (mins >= 0 && secs >= 0) {
+                        btn.text("Reload available in " + pad(mins, 2) + ":" + pad(secs, 2));
+                        if (secs > 0) {
+                            secs--;
+                        } else {
+                            secs = 59;
+                            mins--;
+                        }
+                        if (mins < 0) {
+                            clearInterval(interval);
+                            btn.removeAttr("disabled").text("New Tweets");
+                            return true;
+                        }
+                    }
+                    console.log("Mins: " + mins + ", Secs: " + secs);
+                }, 1000);
+            // });
+        });
+
+        function pad(num, size) {
+            var s = num + "";
+            while (s.length < size) s = "0" + s;
+            return s;
         }
-        document.getElementById("reload-button").addEventListener("click", reloadTweets);
+
     </script>
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+    <!-- <script type="text/javascript">
+        function showTimer() {
+            var timer_p = document.getElementById("timer");
+            timer_p.className = "show";
+            setTimeout(function () {
+                timer_p.className = "hide";
+            }, 3000);
+        }
+    </script> -->
 
 </body>
 
